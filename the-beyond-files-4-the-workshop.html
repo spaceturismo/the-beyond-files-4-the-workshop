@@ -29,8 +29,8 @@ var G={7:"<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta n
 var NAMES={7:'The Workshop'};
 var CODES={};
 var m=document.getElementById('m'),gm=document.getElementById('game'),bar=document.getElementById('bar'),dn=document.getElementById('done'),dc=document.getElementById('dc');
-function meta(n){try{return JSON.parse(localStorage.getItem('bf2-meta-'+n)||'null')}catch(e){return null}}
-function setMeta(n,v){try{localStorage.setItem('bf2-meta-'+n,JSON.stringify(v))}catch(e){}}
+function meta(n){try{var saved=JSON.parse(localStorage.getItem('bf4-meta-'+n)||localStorage.getItem('bf2-meta-'+n)||'null');return saved&&Object.prototype.hasOwnProperty.call(G,saved.ch)?saved:null}catch(e){return null}}
+function setMeta(n,v){try{localStorage.setItem('bf4-meta-'+n,JSON.stringify(v))}catch(e){}}
 function wipe(n,c){try{var p='bf2-s'+n+'-c'+c+'-';Object.keys(localStorage).forEach(function(k){if(k.indexOf(p)===0)localStorage.removeItem(k)})}catch(e){}}
 function info(n){var v=meta(n);if(!v)return 'Empty';if(v.done)return 'Complete';return NAMES[v.ch]}
 function E(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x)e.textContent=x;return e}
@@ -43,7 +43,7 @@ function slot(n){m.innerHTML='';var v=meta(n);m.append(E('h1',0,'Save '+n),E('p'
  if(v&&!v.done)r.append(B('Continue',function(){play(n,7)}));
  if(v&&v.done)r.append(B('Play again',function(){play(n,7)}));
  r.append(B(v?'Start over':'New game',function(){wipe(n,7);setMeta(n,{ch:7});play(n,7)}));m.append(r);
- if(v)m.append(B('Erase this save',function(){wipe(n,7);try{localStorage.removeItem('bf2-meta-'+n)}catch(e){}slot(n)},1));
+ if(v)m.append(B('Erase this save',function(){wipe(n,7);setMeta(n,{});slot(n)},1));
  m.append(B('Back',home,1))}
 function shim(n,c){var p='bf2-s'+n+'-c'+c+'-';return '<scr'+'ipt>(function(){var P='+JSON.stringify(p)+',S=Storage.prototype,g=S.getItem,s=S.setItem,r=S.removeItem;S.getItem=function(k){return g.call(this,P+k)};S.setItem=function(k,v){return s.call(this,P+k,v)};S.removeItem=function(k){return r.call(this,P+k)};})();</scr'+'ipt>'}
 function play(n,c){m.innerHTML='';dn.style.display='none';cur={n:n,c:c};var h=G[c];
